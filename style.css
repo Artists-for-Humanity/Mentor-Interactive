@@ -1,0 +1,72 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --lineup-image: url("assets/line-up.jpg");
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+    background: #030303;
+}
+
+.demo {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    isolation: isolate;
+}
+
+.image-stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #030303;
+}
+
+.lineup-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(100vw, calc(100svh * 2560 / 854));
+    aspect-ratio: 2560 / 854;
+    transform: translate(-50%, -50%);
+}
+
+.lineup-layer {
+    position: absolute;
+    inset: 0;
+    background-image: var(--lineup-image);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.lineup-layer--gray {
+    filter: grayscale(1) brightness(0.42) contrast(1.08);
+}
+
+.lineup-layer--color {
+    opacity: 0;
+    filter: saturate(1.14) contrast(1.04);
+    transition: opacity 120ms ease;
+    will-change: opacity;
+}
+
+.lineup-layer--color.is-active {
+    opacity: 1;
+}
+
+.slice {
+    --start: 0%;
+    --end: 0%;
+    clip-path: polygon(var(--start) 0, var(--end) 0, var(--end) 100%, var(--start) 100%);
+}
