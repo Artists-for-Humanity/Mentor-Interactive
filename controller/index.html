@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Controller (simulated ESP32s)</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #111;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+  }
+  h1 { font-size: 1.2rem; color: #888; margin-bottom: 4px; }
+  #status { font-size: 0.9rem; margin-bottom: 40px; }
+  #status.connected { color: #4caf50; }
+  #status.disconnected { color: #e53935; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    gap: 20px;
+  }
+  .device {
+    border: 2px solid #444;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.15s ease;
+  }
+  .device .key { font-size: 1.8rem; font-weight: bold; }
+  .device .id { font-size: 0.8rem; color: #888; margin-top: 6px; }
+  .device .state { font-size: 0.75rem; margin-top: 8px; color: #666; }
+  .device.picked_up {
+    border-color: #4caf50;
+    background: #1b3320;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+  }
+  .hint { margin-top: 40px; color: #666; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <h1>CONTROLLER CLIENT — port 3000</h1>
+  <div id="status" class="disconnected">connecting...</div>
+
+  <div class="grid">
+    <div class="device" id="dev-esp32-1">
+      <div class="key">1</div>
+      <div class="id">esp32-1</div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="dev-esp32-2">
+      <div class="key">2</div>
+      <div class="id">esp32-2</div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="dev-esp32-3">
+      <div class="key">3</div>
+      <div class="id">esp32-3</div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="dev-esp32-4">
+      <div class="key">4</div>
+      <div class="id">esp32-4</div>
+      <div class="state">resting</div>
+    </div>
+  </div>
+
+  <div class="hint">Press and hold 1 / 2 / 3 / 4 to simulate picking up that ESP32.<br>Release the key to simulate putting it back down.</div>
+
+<script>
+  const WS_URL = 'ws://localhost:8080';
+  const keyToDevice = {
+    '1': 'esp32-1',
+    '2': 'esp32-2',
+    '3': 'esp32-3',
+    '4': 'esp32-4',
+  };
+
+  // track which keys are currently held so we don't spam events on OS key-repeat
+  const held = new Set();
+
+  let ws;
+  const statusEl = document.getElementById('status');
+
+  function connect() {
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+      statusEl.textContent = 'connected to server';
+      statusEl.className = 'connected';
+      ws.send(JSON.stringify({ type: 'hello', role: 'esp32', device_id: 'controller-multi' }));
+      // NOTE: in this demo one controller simulates all 4 devices.
+      // A real deployment would be 4 separate ESP32s each sending their own hello.
+    };
+
+    ws.onclose = () => {
+      statusEl.textContent = 'disconnected — retrying...';
+      statusEl.className = 'disconnected';
+      setTimeout(connect, 1000);
+    };
+
+    ws.onerror = () => ws.close();
+  }
+
+  connect();
+
+  function sendMotion(device_id, state) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'motion', device_id, state }));
+    }
+    const el = document.getElementById(`dev-${device_id}`);
+    if (el) {
+      el.classList.toggle('picked_up', state === 'picked_up');
+      el.querySelector('.state').textContent = state;
+    }
+  }
+
+  window.addEventListener('keydown', (e) => {
+    const device_id = keyToDevice[e.key];
+    if (!device_id || held.has(e.key)) return;
+    held.add(e.key);
+    sendMotion(device_id, 'picked_up');
+  });
+
+  window.addEventListener('keyup', (e) => {
+    const device_id = keyToDevice[e.key];
+    if (!device_id) return;
+    held.delete(e.key);
+    sendMotion(device_id, 'resting');
+  });
+</script>
+</body>
+</html>

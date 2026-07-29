@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Display Client</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #0a0e14;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+  }
+  h1 { font-size: 1.2rem; color: #888; margin-bottom: 4px; }
+  #status { font-size: 0.9rem; margin-bottom: 40px; }
+  #status.connected { color: #4caf50; }
+  #status.disconnected { color: #e53935; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 140px);
+    gap: 24px;
+  }
+  .device {
+    border: 2px solid #2a2f3a;
+    border-radius: 16px;
+    padding: 28px 16px;
+    text-align: center;
+    background: #12161f;
+    transition: all 0.25s ease;
+  }
+  .device .id { font-size: 1rem; font-weight: 600; }
+  .device .state { font-size: 0.85rem; margin-top: 10px; color: #667; text-transform: uppercase; letter-spacing: 0.05em; }
+  .device .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #333; margin: 12px auto 0;
+  }
+  .device.picked_up {
+    border-color: #ffb300;
+    background: #2a2412;
+    box-shadow: 0 0 30px rgba(255, 179, 0, 0.35);
+    transform: translateY(-4px);
+  }
+  .device.picked_up .dot { background: #ffb300; box-shadow: 0 0 10px #ffb300; }
+  .device.picked_up .state { color: #ffb300; }
+  .log {
+    margin-top: 50px;
+    width: 560px;
+    height: 160px;
+    overflow-y: auto;
+    background: #12161f;
+    border: 1px solid #2a2f3a;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #789;
+  }
+  .log div { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+  <h1>DISPLAY CLIENT — port 3001</h1>
+  <div id="status" class="disconnected">connecting...</div>
+
+  <div class="grid">
+    <div class="device" id="disp-esp32-1">
+      <div class="id">esp32-1</div>
+      <div class="dot"></div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="disp-esp32-2">
+      <div class="id">esp32-2</div>
+      <div class="dot"></div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="disp-esp32-3">
+      <div class="id">esp32-3</div>
+      <div class="dot"></div>
+      <div class="state">resting</div>
+    </div>
+    <div class="device" id="disp-esp32-4">
+      <div class="id">esp32-4</div>
+      <div class="dot"></div>
+      <div class="state">resting</div>
+    </div>
+  </div>
+
+  <div class="log" id="log"></div>
+
+<script>
+  const WS_URL = 'ws://localhost:8080';
+  let ws;
+  const statusEl = document.getElementById('status');
+  const logEl = document.getElementById('log');
+
+  function connect() {
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+      statusEl.textContent = 'connected to server';
+      statusEl.className = 'connected';
+      ws.send(JSON.stringify({ type: 'hello', role: 'display' }));
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'motion') {
+        const el = document.getElementById(`disp-${data.device_id}`);
+        if (el) {
+          el.classList.toggle('picked_up', data.state === 'picked_up');
+          el.querySelector('.state').textContent = data.state;
+        }
+        logLine(`${new Date(data.ts).toLocaleTimeString()}  ${data.device_id} -> ${data.state}`);
+      } else if (data.type === 'disconnect') {
+        logLine(`${new Date().toLocaleTimeString()}  ${data.device_id} disconnected`);
+      }
+    };
+
+    ws.onclose = () => {
+      statusEl.textContent = 'disconnected — retrying...';
+      statusEl.className = 'disconnected';
+      setTimeout(connect, 1000);
+    };
+
+    ws.onerror = () => ws.close();
+  }
+
+  function logLine(text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  connect();
+</script>
+</body>
+</html>
