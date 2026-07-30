@@ -39,21 +39,65 @@ Object.entries(sectorRanges).forEach(([key, [start, end]]) => {
     setRange(key, start, end);
 });
 
+// Keyboard listeners
 window.addEventListener("keydown", (event) => {
-    if (event.repeat) {
-        return;
-    }
-
+    if (event.repeat) return;
     setPressed(event.key, true);
 });
 
-window.addEventListener("keyup", (event) => {
+window.addEventListener("keyup", (event) => {    
     setPressed(event.key, false);
+    console.log(event.key);
 });
 
 window.addEventListener("blur", releaseAll);
 document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        releaseAll();
-    }
+    if (document.hidden) releaseAll();
 });
+
+// Serial reading for character 1 
+let serialReleaseTimer = null;
+
+async function startSerialReading() {
+    try {
+        // Request a port and open at 115200 baud
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+
+       
+                //1 TextDecoderStream helps convert binary data into string characters
+                const textDecoder = new TextDecoderStream();
+                const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+                const reader = textDecoder.readable.getReader();
+
+                // Loop to keep reading data continuously
+                while (true) {
+                const { value, done } = await reader.read();
+                if (done) {
+                    break; 
+                }
+                
+                if (value) {
+                    // Parse line of extra chars 
+                    const data = value.trim(); 
+
+                    if (data === 'T') {
+                    console.log("Received T");
+                    setPressed("1", true);
+                    } else if (data === 'F') {
+                    console.log("Received F");
+                    setPressed("1", false);
+                    
+                    }
+                }
+                }
+      
+    } catch (err) {
+        console.error("Serial Connection Error:", err);
+    }
+}
+
+// Need screen click to initiate serial request 
+document.addEventListener("click", () => {
+    startSerialReading();
+}, { once: true });
