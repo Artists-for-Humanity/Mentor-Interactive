@@ -204,7 +204,7 @@ document.addEventListener("visibilitychange", () => {
 const speedSlider = document.getElementById('speed');
 const label = document.getElementById('value-label');
 
-const speeds = [0.5, 1, 2];
+const speeds = [0.75, 1, 1.2];
 
 function setPlaybackRate(rate) {
     audioTracks.forEach((track) => {
@@ -225,7 +225,6 @@ setPlaybackRate(speeds[Number(speedSlider.value)]);
 
 const activate = () => speedSlider.classList.add('is-active');
 const deactivate = () => speedSlider.classList.remove('is-active');
-
 async function startSerialReading() {
     if (!("serial" in navigator)) {
         console.warn("Web Serial is not supported in this browser.");
@@ -237,40 +236,42 @@ async function startSerialReading() {
         const port = await navigator.serial.requestPort();
         await port.open({ baudRate: 115200 });
 
-       
-                //1 TextDecoderStream helps convert binary data into string characters
-                const textDecoder = new TextDecoderStream();
-                const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-                const reader = textDecoder.readable.getReader();
+        // TextDecoderStream helps convert binary data into string characters
+        const textDecoder = new TextDecoderStream();
+        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+        const reader = textDecoder.readable.getReader();
 
-                // Loop to keep reading data continuously
-                while (true) {
-                const { value, done } = await reader.read();
-                if (done) {
-                    break; 
+        // Loop to keep reading data continuously
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+                break;
+            }
+            if (value) {
+                const data = value.trim();
+                console.log(data);
+                if (data === '0.00') {
+                    setPlaybackRate(speeds[0]);
+                } else if (data === '1.00') {
+                    setPlaybackRate(speeds[1]);
+                } else if (data === '2.00') {
+                    setPlaybackRate(speeds[2]);
                 }
-                
-                if (value) {
-                    // Parse line of extra chars 
-                    const data = value.trim(); 
-
-                    if (data === 'T') {
-                    console.log("Received T");
-                    setPressed("4", true);
-                    } else if (data === 'F') {
-                    console.log("Received F");
-                    setPressed("4", false);
-                    
-                    }
-                }
-                }
-      
+            }
+        }
     } catch (err) {
         console.error("Serial Connection Error:", err);
     }
 }
 
-speedSlider.addEventListener('mousedown', activate);
-speedSlider.addEventListener('touchstart', activate);
+// speedSlider.addEventListener('mousedown', activate);
+// speedSlider.addEventListener('touchstart', activate);
 window.addEventListener('mouseup', deactivate);
 window.addEventListener('touchend', deactivate);
+
+// Web Serial requires a direct user gesture to request a port,
+// so trigger it once on the first click anywhere on the page.
+window.addEventListener('click', function initSerial() {
+    startSerialReading();
+    window.removeEventListener('click', initSerial);
+});
