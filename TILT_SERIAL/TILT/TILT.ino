@@ -14,7 +14,7 @@ bool isUpright(float accelZ) {
 
 void setup(){
     Wire.begin(21, 22);
-    Serial.begin(115200); 
+    Serial.begin(38400); 
     
     wakeSensor(MPU_ADDRESS); 
     Wire.beginTransmission(MPU_ADDRESS);

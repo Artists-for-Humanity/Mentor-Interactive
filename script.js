@@ -83,10 +83,10 @@ async function startSerialReading() {
 
                     if (data === 'T') {
                     console.log("Received T");
-                    setPressed("1", true);
+                    setPressed("4", true);
                     } else if (data === 'F') {
                     console.log("Received F");
-                    setPressed("1", false);
+                    setPressed("4", false);
                     
                     }
                 }
