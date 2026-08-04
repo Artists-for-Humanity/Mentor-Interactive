@@ -225,43 +225,169 @@ setPlaybackRate(speeds[Number(speedSlider.value)]);
 
 const activate = () => speedSlider.classList.add('is-active');
 const deactivate = () => speedSlider.classList.remove('is-active');
+async function readPotentiometer(port) {
+    // TextDecoderStream helps convert binary data into string characters
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    // Loop to keep reading data continuously
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+        if (value) {
+            const data = value.trim();
+            console.log("Potentiometer:", data);
+            if (data === '0.00') {
+                setPlaybackRate(speeds[0]);
+            } else if (data === '1.00') {
+                setPlaybackRate(speeds[1]);
+            } else if (data === '2.00') {
+                setPlaybackRate(speeds[2]);
+            }
+        }
+    }
+}
+
+async function readDistance(port) {
+    // Prints "NEAR" or "FAR"
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+        if (value) {
+            const data = value.trim();
+            console.log("Distance:", data);
+            // TODO: handle "NEAR" / "FAR"
+            if(data === 'C'){
+                setPressed(3, true);
+            }
+            else if(data === 'X'){
+                setPressed(3, false);
+            }
+            else{
+                // setPressed(1, false);
+            }
+        }
+    }
+}
+
+async function readSwitch(port) {
+    // Prints "ON" or "OFF"
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+        if (value) {
+            const data = value.trim();
+            console.log("Switch:", data);
+            // TODO: handle "ON" / "OFF"
+            if(data == 'Y'){
+                setPressed(1, true);
+            }
+            else if(data === 'N'){
+                setPressed(1, false);
+            }
+            else{
+                // setPressed(1, false);
+            }
+        }
+    }
+}
+
+async function readAccelerometer(port) {
+    // Prints "T" or "F"
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+        if (value) {
+            const data = value.trim();
+            console.log("Accelerometer:", data);
+            // TODO: handle "T" / "F"
+            if(data == 'T'){
+                setPressed(2, true);
+            }
+            else if(data === 'F'){
+                setPressed(2, false);
+            }
+            else{
+                // setPressed(1, false);
+            }
+        }
+    }
+}
+
+async function readButton(port) {
+    // Prints "P" (pressed) or "NP" (not pressed)
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+    const reader = textDecoder.readable.getReader();
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+        if (value) {
+            const data = value.trim();
+            console.log("Button:", data);
+            if(data == 'P'){
+                setPressed(4, true);
+            }
+            else if(data === 'W'){
+                setPressed(4, false);
+            }
+            else{
+                // setPressed(1, false);
+            }
+        }
+    }
+}
+
+async function connectSerialDevice(baudRate, readFn, label) {
+    try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate });
+        // Run this device's read loop without blocking the other connections
+        readFn(port).catch((err) => {
+            console.error(`${label} read error:`, err);
+        });
+    } catch (err) {
+        console.error(`${label} connection error:`, err);
+    }
+}
+
 async function startSerialReading() {
     if (!("serial" in navigator)) {
         console.warn("Web Serial is not supported in this browser.");
         return;
     }
 
-    try {
-        // Request a port and open at 115200 baud
-        const port = await navigator.serial.requestPort();
-        await port.open({ baudRate: 115200 });
-
-        // TextDecoderStream helps convert binary data into string characters
-        const textDecoder = new TextDecoderStream();
-        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-        const reader = textDecoder.readable.getReader();
-
-        // Loop to keep reading data continuously
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) {
-                break;
-            }
-            if (value) {
-                const data = value.trim();
-                console.log(data);
-                if (data === '0.00') {
-                    setPlaybackRate(speeds[0]);
-                } else if (data === '1.00') {
-                    setPlaybackRate(speeds[1]);
-                } else if (data === '2.00') {
-                    setPlaybackRate(speeds[2]);
-                }
-            }
-        }
-    } catch (err) {
-        console.error("Serial Connection Error:", err);
-    }
+    // Each device shows its own picker dialog (one per requestPort call).
+    // Once opened, all five ports are listened to concurrently.
+    await connectSerialDevice(115200, readPotentiometer, "Potentiometer");
+    await connectSerialDevice(9600, readDistance, "Distance");
+    await connectSerialDevice(4800, readSwitch, "Switch");
+    await connectSerialDevice(38400, readAccelerometer, "Accelerometer");
+    await connectSerialDevice(74880, readButton, "Button");
 }
 
 // speedSlider.addEventListener('mousedown', activate);

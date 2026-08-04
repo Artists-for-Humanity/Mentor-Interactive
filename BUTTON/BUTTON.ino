@@ -18,7 +18,7 @@ void loop()
   if (buttonState == LOW) {
     Serial.println("P");
   } else {
-    Serial.println("NP");
+    Serial.println("W");
   }
   delay(500); 
 }

@@ -21,14 +21,12 @@ void loop() {
   duration = pulseIn(echoPin, HIGH);
   distance = duration * 0.034 / 2;
   if (distance > 5){
-    Serial.println("FAR");
+    Serial.println("X");
   }
   else if (distance <= 5){
-    Serial.println("NEAR");
+    Serial.println("C");
   }
-  else{
-     Serial.println("NEAR");
-  }
+  
   
   delay(500);
 }

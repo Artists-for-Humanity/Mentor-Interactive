@@ -10,10 +10,10 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   
   if (buttonState == LOW) {
-    Serial.println("ON");
+    Serial.println("Y");
   } else {
-    Serial.println("OFF");
+    Serial.println("N");
   }
   
-  delay(200);
+  delay(1000);
 }
