@@ -21,7 +21,7 @@ body {
 .demo {
     position: relative;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     isolation: isolate;
 }
 
@@ -70,3 +70,77 @@ body {
     --end: 0%;
     clip-path: polygon(var(--start) 0, var(--end) 0, var(--end) 100%, var(--start) 100%);
 }
+
+/* volume slider */
+
+      .volume-fader {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      /* WebKit track: recessed groove */
+      .volume-fader::-webkit-slider-runnable-track {
+        height: 10px;
+        border-radius: 3px;
+        background: linear-gradient(to bottom, #09090b, #27272a 40%, #09090b);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06),
+                    inset 0 1px 2px rgba(0,0,0,0.8),
+                    inset 0 -1px 2px rgba(0,0,0,0.8);
+      }
+
+      /* WebKit thumb: rectangular fader cap, slate by default */
+      .volume-fader::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 44px;
+        border-radius: 3px;
+        background: linear-gradient(to right, #64748b, #334155 45%, #1e293b 46%, #475569);
+        border: 1px solid #020617;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.15);
+        cursor: grab;
+        margin-top: -17px;
+        transition: background 0.15s ease;
+      }
+
+      /* Firefox track */
+      .volume-fader::-moz-range-track {
+        height: 10px;
+        border-radius: 3px;
+        background: linear-gradient(to bottom, #09090b, #27272a 40%, #09090b);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+      }
+
+      /* Firefox thumb */
+      .volume-fader::-moz-range-thumb {
+        width: 18px;
+        height: 44px;
+        border-radius: 3px;
+        background: linear-gradient(to right, #64748b, #334155 45%, #1e293b 46%, #475569);
+        border: 1px solid #020617;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.15);
+        cursor: grab;
+        transition: background 0.15s ease;
+      }
+
+      /* active (pressed) state — WebKit supports :active on the thumb directly */
+      .volume-fader::-webkit-slider-thumb:active {
+        cursor: grabbing;
+      }
+
+      /* JS-driven active class, works across browsers reliably while dragging */
+      .volume-fader.is-active::-webkit-slider-thumb {
+        background: linear-gradient(to right, #60a5fa, #2563eb 45%, #1d4ed8 46%, #3b82f6);
+        border-color: #172554;
+        box-shadow: 0 0 8px rgba(59,130,246,0.6), 0 2px 4px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.25);
+      }
+
+      .volume-fader.is-active::-moz-range-thumb {
+        background: linear-gradient(to right, #60a5fa, #2563eb 45%, #1d4ed8 46%, #3b82f6);
+        border-color: #172554;
+        box-shadow: 0 0 8px rgba(59,130,246,0.6), 0 2px 4px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.25);
+      }
+
+      /* center notch line on the cap, like a real fader */
+      .fader-wrap {
+        position: relative;
+      }

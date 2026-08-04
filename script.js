@@ -199,6 +199,33 @@ document.addEventListener("visibilitychange", () => {
     if (document.hidden) releaseAll();
 });
 
+
+// SPEED SLIDER
+const speedSlider = document.getElementById('speed');
+const label = document.getElementById('value-label');
+
+const speeds = [0.5, 1, 2];
+
+function setPlaybackRate(rate) {
+    audioTracks.forEach((track) => {
+        if (track.player) {
+            track.player.playbackRate = rate;
+        }
+    });
+}
+
+speedSlider.addEventListener('input', () => {
+const rate = speeds[Number(speedSlider.value)];
+label.textContent = `Speed · ${rate}x`;
+    setPlaybackRate(rate);
+});
+
+// set the initial rate to match the slider's starting value on load
+setPlaybackRate(speeds[Number(speedSlider.value)]);
+
+const activate = () => speedSlider.classList.add('is-active');
+const deactivate = () => speedSlider.classList.remove('is-active');
+
 async function startSerialReading() {
     if (!("serial" in navigator)) {
         console.warn("Web Serial is not supported in this browser.");
@@ -243,8 +270,7 @@ async function startSerialReading() {
     }
 }
 
-// Need screen click to initiate serial request 
-document.addEventListener("click", () => {
-    startAudio();
-    startSerialReading();
-}, { once: true });
+speedSlider.addEventListener('mousedown', activate);
+speedSlider.addEventListener('touchstart', activate);
+window.addEventListener('mouseup', deactivate);
+window.addEventListener('touchend', deactivate);
