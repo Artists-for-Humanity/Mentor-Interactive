@@ -8,41 +8,47 @@
     <link rel="stylesheet" href="output.css">
 </head>
 <body>
-    <main class="demo scale-90 -translate-x-[10vw]" aria-label="Lineup color reveal demo">
-        <section class="image-stage" aria-hidden="true">
+    <main class="demo" aria-label="Lineup color reveal demo">
+        <section class="show-title" aria-label="The Big Summer Show">
+            <h1>the big summer show</h1>
+            <p>interactive music experience</p>
+        </section>
+        <section class="image-stage">
             <div class="lineup-frame">
                 <div class="lineup-layer lineup-layer--gray"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="1"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="2"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="3"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="4"></div>
+                <div class="character-split character-split--one" data-character="1">
+                    <div class="character-split__matte"></div>
+                    <img class="character-split__part character-split__body" src="assets/characters/body-1.png" alt="">
+                    <img class="character-split__part character-split__head" src="assets/characters/head-1.png" alt="">
+                </div>
+                <div class="character-split character-split--two" data-character="2">
+                    <div class="character-split__matte"></div>
+                    <img class="character-split__part character-split__body" src="assets/characters/body-2.png" alt="">
+                    <img class="character-split__part character-split__head" src="assets/characters/head-2.png" alt="">
+                </div>
+                <button class="character-hotspot character-hotspot--one" type="button" data-character-hotspot="1" aria-label="Activate first character"></button>
+                <button class="character-hotspot character-hotspot--two" type="button" data-character-hotspot="2" aria-label="Activate second character"></button>
             </div>
         </section>
+        <img class="corner-logo" src="assets/logo.png" alt="Artists for Humanity">
     </main>
-    
-    <div class="fixed right-0 top-0 bg-slate-500 w-32 min-h-screen z-10 p-4 flex flex-col items-center justify-center">
-      <span id="value-label">speed: 1x</span>  
-      
-      <!-- slider here -->
-        <div class="flex flex-col items-center gap-3 w-full">
-          <div class="fader-wrap w-[50vh] flex items-center -translate-x-1">
-            <input
-              id="speed"
-              type="range"
-              min="0"
-              max="2"
-              value="1"
-              step="1"
-              class="volume-fader w-[50vh] h-3 rounded cursor-grab -rotate-90"
-            />
-          </div>
 
-          <div class="w-[50vh] flex justify-between text-slate-200 -translate-y-5 translate-x-9 -rotate-90 text-[9px] font-mono">
-            <span class="rotate-90">0.5x</span>
-            <span class="rotate-90">1x</span>
-            <span class="rotate-90">2x</span>
-          </div>
-        </div>
+    <div class="speed-control">
+        <span id="value-label" class="speed-control__label">Speed · 1x</span>
+        <input
+            id="speed"
+            type="range"
+            min="0"
+            max="2"
+            value="1"
+            step="1"
+            class="volume-fader speed-control__range"
+            aria-label="Playback speed"
+        />
     </div>
 
     <script src="script.js"></script>

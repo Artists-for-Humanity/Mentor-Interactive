@@ -50,6 +50,14 @@ const slices = new Map(
     [...document.querySelectorAll(".slice")].map((slice) => [slice.dataset.sector, slice])
 );
 
+const characterSplits = new Map(
+    [...document.querySelectorAll("[data-character]")].map((character) => [character.dataset.character, character])
+);
+
+const characterHotspots = new Map(
+    [...document.querySelectorAll("[data-character-hotspot]")].map((hotspot) => [hotspot.dataset.characterHotspot, hotspot])
+);
+
 function timeToSeconds(timeText) {
     const parts = timeText.split(":").map(Number);
     const minutes = parts[0];
@@ -169,6 +177,8 @@ function setPressed(key, isPressed) {
     }
 
     slice.classList.toggle("is-active", isPressed);
+    characterSplits.get(sectorKey)?.classList.toggle("is-active", isPressed);
+    characterHotspots.get(sectorKey)?.setAttribute("aria-pressed", String(isPressed));
     activeSectors[sectorKey] = isPressed;
 
     if (isPressed) {
@@ -180,6 +190,8 @@ function setPressed(key, isPressed) {
 
 function releaseAll() {
     slices.forEach((slice) => slice.classList.remove("is-active"));
+    characterSplits.forEach((character) => character.classList.remove("is-active"));
+    characterHotspots.forEach((hotspot) => hotspot.setAttribute("aria-pressed", "false"));
 
     Object.keys(activeSectors).forEach((sector) => {
         activeSectors[sector] = false;
@@ -190,6 +202,32 @@ function releaseAll() {
 
 Object.entries(sectorRanges).forEach(([key, [start, end]]) => {
     setRange(key, start, end);
+});
+
+characterHotspots.forEach((hotspot, key) => {
+    hotspot.setAttribute("aria-pressed", "false");
+
+    hotspot.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        hotspot.setPointerCapture(event.pointerId);
+        setPressed(key, true);
+    });
+
+    hotspot.addEventListener("pointerup", (event) => {
+        if (hotspot.hasPointerCapture(event.pointerId)) {
+            hotspot.releasePointerCapture(event.pointerId);
+        }
+
+        setPressed(key, false);
+    });
+
+    hotspot.addEventListener("pointercancel", () => {
+        setPressed(key, false);
+    });
+
+    hotspot.addEventListener("lostpointercapture", () => {
+        setPressed(key, false);
+    });
 });
 
 // Keyboard listeners
@@ -398,8 +436,8 @@ async function startSerialReading() {
     await connectSerialDevice(74880, readButton, "Button");
 }
 
-// speedSlider.addEventListener('mousedown', activate);
-// speedSlider.addEventListener('touchstart', activate);
+speedSlider.addEventListener('mousedown', activate);
+speedSlider.addEventListener('touchstart', activate);
 window.addEventListener('mouseup', deactivate);
 window.addEventListener('touchend', deactivate);
 
