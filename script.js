@@ -255,8 +255,14 @@ document.addEventListener("visibilitychange", () => {
 const speedSlider = document.getElementById('speed');
 const label = document.getElementById('value-label');
 const speedControl = speedSlider.closest('.speed-control');
+// const rootStyle = document.documentElement.style;
 
 const speeds = [0.75, 1, 1.2];
+// const animationDurations = [
+//     { head: '1120ms', sway: '3000ms' },
+//     { head: '560ms', sway: '1500ms' },
+//     { head: '280ms', sway: '750ms' }
+// ];
 
 function setPlaybackRate(rate) {
     currentPlaybackRate = rate;
@@ -282,6 +288,8 @@ function setSpeedIndex(index) {
     speedSlider.value = String(speedIndex);
     label.textContent = String(rate);
     speedControl.style.setProperty('--speed-position', position);
+    // rootStyle.setProperty('--head-animation-duration', animationDurations[speedIndex].head);
+    // rootStyle.setProperty('--head-sway-duration', animationDurations[speedIndex].sway);
     speedSlider.setAttribute('aria-valuetext', `${rate}x`);
     setPlaybackRate(rate);
 }

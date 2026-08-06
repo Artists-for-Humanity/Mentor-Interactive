@@ -17,6 +17,8 @@
 
 :root {
     --lineup-image: url("assets/line-up.jpg");
+    --head-animation-duration: 560ms;
+    --head-sway-duration: 1500ms;
 }
 
 html,
@@ -309,7 +311,7 @@ body {
 }
 
 .character-split.is-active .character-split__head {
-    animation: head-bob 560ms ease-in-out infinite;
+    animation: head-bob var(--head-animation-duration) ease-in-out infinite;
 }
 
 .character-split--two .character-split__matte {
@@ -382,7 +384,7 @@ body {
 
 .character-split--four.is-active .character-split__head {
     animation-name: head-sway;
-    animation-duration: 1500ms;
+    animation-duration: var(--head-sway-duration);
 }
 
 .character-hotspot {
@@ -443,6 +445,23 @@ body {
 @keyframes head-sway {
     0%,
     100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-7%);
+    }
+
+    75% {
+        transform: translateX(7%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+/* @keyframes head-sway {
+    0%,
+    100% {
         transform: translateY(0) rotate(0deg);
     }
 
@@ -463,9 +482,9 @@ body {
     }
 
     80% {
-        transform: translateY(-6%) rotate(12deg);  }
-}
-
+        transform: translateY(-6%) rotate(12deg);
+    }
+} */
 @keyframes head-pop {
     0%,
     100% {
