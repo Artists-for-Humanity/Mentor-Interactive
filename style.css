@@ -65,6 +65,125 @@ body {
     opacity: 1;
 }
 
+.character-split,
+.character-hotspot {
+    position: absolute;
+}
+
+.character-split {
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+    z-index: 2;
+}
+
+.character-split.is-active {
+    opacity: 1;
+}
+
+.character-split__matte {
+    position: absolute;
+    left: 8.6%;
+    top: 12.4%;
+    width: 17.2%;
+    height: 49%;
+    background: #000;
+    z-index: 0;
+}
+
+.character-split__part {
+    position: absolute;
+    display: block;
+    height: auto;
+    max-width: none;
+    user-select: none;
+}
+
+.character-split__body {
+    left: 1.13%;
+    top: 54.2%;
+    width: 31.4%;
+    z-index: 1;
+}
+
+.character-split__head {
+    left: 8.98%;
+    top: 15.1%;
+    width: 16.1%;
+    z-index: 2;
+}
+
+.character-split.is-active .character-split__head {
+    animation: head-bob 560ms ease-in-out infinite;
+}
+
+.character-split--two .character-split__matte {
+    left: 33.3%;
+    top: 8.6%;
+    width: 19.5%;
+    height: 55.5%;
+}
+
+.character-split--two .character-split__body {
+    left: 33%;
+    top: 58.5%;
+    width: 20.3%;
+}
+
+.character-split--two .character-split__head {
+    left: 33.3%;
+    top: 8.7%;
+    width: 19.5%;
+    transform-origin: 56% 82%;
+}
+
+.character-split--two.is-active .character-split__head {
+    animation-name: head-bob-tilt;
+}
+
+.character-hotspot {
+    left: 0;
+    top: 8%;
+    width: 32%;
+    height: 92%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.character-hotspot--two {
+    left: 32%;
+    top: 5%;
+    width: 21%;
+    height: 95%;
+}
+
+@keyframes head-bob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-14.5%);
+        /* scale: 1.1; */
+    }
+}
+
+@keyframes head-bob-tilt {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-14.5%) rotate(15deg);
+    }
+}
+
 .slice {
     --start: 0%;
     --end: 0%;

@@ -9,13 +9,25 @@
 </head>
 <body>
     <main class="demo scale-90 -translate-x-[10vw]" aria-label="Lineup color reveal demo">
-        <section class="image-stage" aria-hidden="true">
+        <section class="image-stage">
             <div class="lineup-frame">
                 <div class="lineup-layer lineup-layer--gray"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="1"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="2"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="3"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="4"></div>
+                <div class="character-split character-split--one" data-character="1">
+                    <div class="character-split__matte"></div>
+                    <img class="character-split__part character-split__body" src="assets/characters/body-1.png" alt="">
+                    <img class="character-split__part character-split__head" src="assets/characters/head-1.png" alt="">
+                </div>
+                <div class="character-split character-split--two" data-character="2">
+                    <div class="character-split__matte"></div>
+                    <img class="character-split__part character-split__body" src="assets/characters/body-2.png" alt="">
+                    <img class="character-split__part character-split__head" src="assets/characters/head-2.png" alt="">
+                </div>
+                <button class="character-hotspot character-hotspot--one" type="button" data-character-hotspot="1" aria-label="Activate first character"></button>
+                <button class="character-hotspot character-hotspot--two" type="button" data-character-hotspot="2" aria-label="Activate second character"></button>
             </div>
         </section>
     </main>
