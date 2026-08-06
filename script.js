@@ -5,6 +5,14 @@ const sectorRanges = {
     4: [75, 100]
 };
 
+const serialDeviceKeys = {
+    'p': { baudRate: 115200, readFn: readPotentiometer, label: "Potentiometer" },
+    'd': { baudRate: 9600,   readFn: readDistance,      label: "Distance" },
+    's': { baudRate: 4800,   readFn: readSwitch,        label: "Switch" },
+    'a': { baudRate: 38400,  readFn: readAccelerometer, label: "Accelerometer" },
+    'b': { baudRate: 74880,  readFn: readButton,        label: "Button" }
+};
+
 const audioTracks = [
     { id: "bass", src: "assets/audio/1-Bass.mp3", player: null, fadeTimer: null },
     { id: "drums", src: "assets/audio/2-Drums.mp3", player: null, fadeTimer: null },
@@ -470,9 +478,30 @@ async function startSerialReading() {
     await connectSerialDevice(74880, readButton, "Button");
 }
 
-// Web Serial requires a direct user gesture to request a port,
-// so trigger it once on the first click anywhere on the page.
-window.addEventListener('click', function initSerial() {
-    startSerialReading();
-    window.removeEventListener('click', initSerial);
+speedSlider.addEventListener('mousedown', activate);
+speedSlider.addEventListener('touchstart', activate);
+window.addEventListener('mouseup', deactivate);
+window.addEventListener('touchend', deactivate);
+
+
+
+const connectedDevices = new Set();
+
+window.addEventListener('keydown', (event) => {
+    if (event.repeat) return;
+
+    const key = event.key.toLowerCase();
+    const device = serialDeviceKeys[key];
+
+    if (!device) return;
+    if (connectedDevices.has(key)) {
+        console.log(`${device.label} already connected.`);
+        return;
+    }
+
+    connectedDevices.add(key);
+    connectSerialDevice(device.baudRate, device.readFn, device.label).catch(() => {
+        // allow retry if connection failed
+        connectedDevices.delete(key);
+    });
 });
