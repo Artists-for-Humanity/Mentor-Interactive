@@ -428,8 +428,8 @@ async function startSerialReading() {
     await connectSerialDevice(74880, readButton, "Button");
 }
 
-// speedSlider.addEventListener('mousedown', activate);
-// speedSlider.addEventListener('touchstart', activate);
+speedSlider.addEventListener('mousedown', activate);
+speedSlider.addEventListener('touchstart', activate);
 window.addEventListener('mouseup', deactivate);
 window.addEventListener('touchend', deactivate);
 
