@@ -336,6 +336,55 @@ body {
     animation-name: head-bob-tilt;
 }
 
+.character-split--three .character-split__matte {
+    left: 53.1%;
+    top: 7.5%;
+    width: 21.2%;
+    height: 62%;
+}
+
+.character-split--three .character-split__body {
+    left: 54.2%;
+    top: 63.7%;
+    width: 20.7%;
+}
+
+.character-split--three .character-split__head {
+    left: 53.9%;
+    top: 13.8%;
+    width: 19.3%;
+    transform-origin: 50% 82%;
+}
+
+.character-split--three.is-active .character-split__head {
+    animation-name: head-pop;
+}
+
+.character-split--four .character-split__matte {
+    left: 77.2%;
+    top: 3.5%;
+    width: 19.6%;
+    height: 62.5%;
+}
+
+.character-split--four .character-split__body {
+    left: 75.5%;
+    top: 60.5%;
+    width: 23.3%;
+}
+
+.character-split--four .character-split__head {
+    left: 78.3%;
+    top: 7.4%;
+    width: 17.3%;
+    transform-origin: 50% 84%;
+}
+
+.character-split--four.is-active .character-split__head {
+    animation-name: head-sway;
+    animation-duration: 1500ms;
+}
+
 .character-hotspot {
     left: 0;
     top: 8%;
@@ -355,6 +404,20 @@ body {
     height: 95%;
 }
 
+.character-hotspot--three {
+    left: 53%;
+    top: 5%;
+    width: 22%;
+    height: 95%;
+}
+
+.character-hotspot--four {
+    left: 75%;
+    top: 4%;
+    width: 25%;
+    height: 96%;
+}
+
 @keyframes head-bob {
     50% {
         scale: 1.2; 
@@ -364,7 +427,7 @@ body {
 @keyframes head-bob-tilt {
     0%,
     100% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(2%) rotate(0deg);
     }
 
     25% {
@@ -375,6 +438,43 @@ body {
         transform:  rotate(-15deg);
     }
 
+}
+
+@keyframes head-sway {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    20% {
+        transform: translateY(0) rotate(-12deg);
+    }
+
+    35% {
+        transform: translateY(-6%) rotate(-12deg);
+    }
+
+    50% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    65% {
+        transform: translateY(0) rotate(12deg);
+    }
+
+    80% {
+        transform: translateY(-6%) rotate(12deg);  }
+}
+
+@keyframes head-pop {
+    0%,
+    100% {
+        transform: translateY(2%) ;
+    }
+
+    50% {
+        transform: translateY(7%) ;
+    }
 }
 
 .slice {
