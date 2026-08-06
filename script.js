@@ -27,6 +27,7 @@ const AUDIO_FADE_MS = 120;
 
 let audioStarted = false;
 let audioLoopTimer = null;
+let currentPlaybackRate = 1;
 
 const audioStartSeconds = timeToSeconds(AUDIO_SECTION_START);
 const audioEndSeconds = timeToSeconds(AUDIO_SECTION_END);
@@ -68,6 +69,7 @@ function startAudio() {
     audioTracks.forEach((track) => {
         track.player = new Audio(track.src);
         track.player.loop = false;
+        track.player.playbackRate = currentPlaybackRate;
         track.player.volume = 0;
         track.player.preload = "auto";
     });
@@ -224,11 +226,22 @@ characterHotspots.forEach((hotspot, key) => {
 
 // Keyboard listeners
 window.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        changeSpeedIndex(event.key === "ArrowUp" ? 1 : -1);
+        return;
+    }
+
     if (event.repeat) return;
     setPressed(event.key, true);
 });
 
-window.addEventListener("keyup", (event) => {    
+window.addEventListener("keyup", (event) => {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        return;
+    }
+
     setPressed(event.key, false);
 });
 
@@ -241,10 +254,13 @@ document.addEventListener("visibilitychange", () => {
 // SPEED SLIDER
 const speedSlider = document.getElementById('speed');
 const label = document.getElementById('value-label');
+const speedControl = speedSlider.closest('.speed-control');
 
 const speeds = [0.75, 1, 1.2];
 
 function setPlaybackRate(rate) {
+    currentPlaybackRate = rate;
+
     audioTracks.forEach((track) => {
         if (track.player) {
             track.player.playbackRate = rate;
@@ -252,17 +268,35 @@ function setPlaybackRate(rate) {
     });
 }
 
-speedSlider.addEventListener('input', () => {
-const rate = speeds[Number(speedSlider.value)];
-label.textContent = `Speed · ${rate}x`;
+function setSpeedIndex(index) {
+    const speedIndex = Math.min(speeds.length - 1, Math.max(0, Number(index)));
+    const rate = speeds[speedIndex];
+    let position = '50%';
+
+    if (speedIndex === 0) {
+        position = 'var(--speed-edge)';
+    } else if (speedIndex === speeds.length - 1) {
+        position = 'calc(100% - var(--speed-edge))';
+    }
+
+    speedSlider.value = String(speedIndex);
+    label.textContent = String(rate);
+    speedControl.style.setProperty('--speed-position', position);
+    speedSlider.setAttribute('aria-valuetext', `${rate}x`);
     setPlaybackRate(rate);
+}
+
+function changeSpeedIndex(direction) {
+    setSpeedIndex(Number(speedSlider.value) + direction);
+}
+
+speedSlider.addEventListener('input', () => {
+    setSpeedIndex(speedSlider.value);
 });
 
 // set the initial rate to match the slider's starting value on load
-setPlaybackRate(speeds[Number(speedSlider.value)]);
+setSpeedIndex(speedSlider.value);
 
-const activate = () => speedSlider.classList.add('is-active');
-const deactivate = () => speedSlider.classList.remove('is-active');
 async function readPotentiometer(port) {
     // TextDecoderStream helps convert binary data into string characters
     const textDecoder = new TextDecoderStream();
@@ -279,11 +313,11 @@ async function readPotentiometer(port) {
             const data = value.trim();
             console.log("Potentiometer:", data);
             if (data === '0.00') {
-                setPlaybackRate(speeds[0]);
+                setSpeedIndex(0);
             } else if (data === '1.00') {
-                setPlaybackRate(speeds[1]);
+                setSpeedIndex(1);
             } else if (data === '2.00') {
-                setPlaybackRate(speeds[2]);
+                setSpeedIndex(2);
             }
         }
     }
@@ -427,11 +461,6 @@ async function startSerialReading() {
     await connectSerialDevice(38400, readAccelerometer, "Accelerometer");
     await connectSerialDevice(74880, readButton, "Button");
 }
-
-speedSlider.addEventListener('mousedown', activate);
-speedSlider.addEventListener('touchstart', activate);
-window.addEventListener('mouseup', deactivate);
-window.addEventListener('touchend', deactivate);
 
 // Web Serial requires a direct user gesture to request a port,
 // so trigger it once on the first click anywhere on the page.

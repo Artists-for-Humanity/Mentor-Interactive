@@ -105,25 +105,84 @@ body {
 }
 
 .speed-control {
+    --speed-edge: 31px;
+    --speed-position: 50%;
     position: fixed;
     top: 3rem;
     left: 2.75rem;
     right: 2.75rem;
+    height: 7.5rem;
     z-index: 6;
 }
 
 .speed-control__label {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+    top: 4.05rem;
+    left: var(--speed-position);
+    width: 5rem;
+    color: #fff;
+    font-family: "ImpactDisplay", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+    text-align: center;
+    transform: translateX(-50%);
+    z-index: 3;
 }
 
 .speed-control__range {
     display: block;
+    position: relative;
     width: 100%;
+    height: 4rem;
+    background: transparent;
+    z-index: 2;
+}
+
+.speed-slider {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.speed-slider::-webkit-slider-runnable-track {
+    height: 13px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #631010 0 15%, #8f2f0f 28%, #39d936 50%, #8f2f0f 72%, #631010 100%);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.9);
+}
+
+.speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.684);
+    border: 1px solid rgba(255,255,255,0.9);
+    cursor: grab;
+    margin-top: -23.5px;
+}
+
+.speed-slider::-moz-range-track {
+    height: 13px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #631010 0 15%, #8f2f0f 28%, #39d936 50%, #8f2f0f 72%, #631010 100%);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.9);
+}
+
+.speed-slider::-moz-range-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.594);
+    border: 3px solid rgba(255,255,255,0.9);
+    cursor: grab;
+}
+
+.speed-slider:active::-webkit-slider-thumb {
+    cursor: grabbing;
+}
+
+.speed-slider:active::-moz-range-thumb {
+    cursor: grabbing;
 }
 
 @media (max-width: 1180px) {
@@ -297,14 +356,7 @@ body {
 }
 
 @keyframes head-bob {
-    0%,
-    100% {
-        /* transform: translateY(10%);12 */
-
-    }
-
     50% {
-        /* transform: translateY(0); */
         scale: 1.2; 
     }
 }
@@ -330,73 +382,3 @@ body {
     --end: 0%;
     clip-path: polygon(var(--start) 0, var(--end) 0, var(--end) 100%, var(--start) 100%);
 }
-
-/* volume slider */
-
-      .volume-fader {
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      /* WebKit track: recessed groove */
-      .volume-fader::-webkit-slider-runnable-track {
-        height: 12px;
-        border-radius: 999px;
-        background: linear-gradient(to right, #5b0b0b, #942019 50%, #5b0b0b);
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.82);
-      }
-
-      /* WebKit thumb: rectangular fader cap, slate by default */
-      .volume-fader::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 62px;
-        height: 62px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 38% 28%, #a8bba1, #77896f 62%, #475340);
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 22px 44px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.22);
-        cursor: grab;
-        margin-top: -25px;
-        transition: background 0.15s ease;
-      }
-
-      /* Firefox track */
-      .volume-fader::-moz-range-track {
-        height: 12px;
-        border-radius: 999px;
-        background: linear-gradient(to right, #5b0b0b, #942019 50%, #5b0b0b);
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.82);
-      }
-
-      /* Firefox thumb */
-      .volume-fader::-moz-range-thumb {
-        width: 62px;
-        height: 62px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 38% 28%, #a8bba1, #77896f 62%, #475340);
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 22px 44px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.22);
-        cursor: grab;
-        transition: background 0.15s ease;
-      }
-
-      /* active (pressed) state — WebKit supports :active on the thumb directly */
-      .volume-fader::-webkit-slider-thumb:active {
-        cursor: grabbing;
-      }
-
-      /* JS-driven active class, works across browsers reliably while dragging */
-      .volume-fader.is-active::-webkit-slider-thumb {
-        background: radial-gradient(circle at 38% 28%, #c6d6ba, #8da382 62%, #596b51);
-        box-shadow: 0 0 18px rgba(151,176,136,0.55), 0 22px 44px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.24);
-      }
-
-      .volume-fader.is-active::-moz-range-thumb {
-        background: radial-gradient(circle at 38% 28%, #c6d6ba, #8da382 62%, #596b51);
-        box-shadow: 0 0 18px rgba(151,176,136,0.55), 0 22px 44px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.24);
-      }
-
-      /* center notch line on the cap, like a real fader */
-      .fader-wrap {
-        position: relative;
-      }

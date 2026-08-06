@@ -16,15 +16,18 @@
         <section class="image-stage">
             <div class="lineup-frame">
                 <div class="lineup-layer lineup-layer--gray"></div>
+                <!-- idle lineup -->
                 <div class="lineup-layer lineup-layer--color slice" data-sector="1"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="2"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="3"></div>
                 <div class="lineup-layer lineup-layer--color slice" data-sector="4"></div>
+                <!-- guy # 1 animations -->
                 <div class="character-split character-split--one" data-character="1">
                     <div class="character-split__matte"></div>
                     <img class="character-split__part character-split__body" src="assets/characters/body-1.png" alt="">
                     <img class="character-split__part character-split__head" src="assets/characters/head-1.png" alt="">
                 </div>
+                <!-- guy # 2 animations -->
                 <div class="character-split character-split--two" data-character="2">
                     <div class="character-split__matte"></div>
                     <img class="character-split__part character-split__body" src="assets/characters/body-2.png" alt="">
@@ -38,7 +41,7 @@
     </main>
 
     <div class="speed-control">
-        <span id="value-label" class="speed-control__label">Speed · 1x</span>
+        <span id="value-label" class="speed-control__label">1</span>
         <input
             id="speed"
             type="range"
@@ -46,14 +49,11 @@
             max="2"
             value="1"
             step="1"
-            class="volume-fader speed-control__range"
+            class="speed-slider speed-control__range"
             aria-label="Playback speed"
         />
     </div>
 
     <script src="script.js"></script>
-    <script>
-
-    </script>
 </body>
 </html>
