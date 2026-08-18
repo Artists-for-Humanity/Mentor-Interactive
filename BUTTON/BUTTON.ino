@@ -1,4 +1,5 @@
 int buttonState = 0;
+const int ledPin = 18;
 
 void setup()
 {
@@ -6,6 +7,8 @@ void setup()
   Serial.begin(74880);
  // Set pin 2 to listen for input from the button
   pinMode(4, INPUT_PULLUP); 
+    pinMode(ledPin, OUTPUT);
+
 
 }
 //Loop runs infinitely until the board is turned off. It is constantly listening for input and giving output that we tell it to, running thousands of times per second depending on the complexity of the function. 
@@ -17,8 +20,12 @@ void loop()
   // If the button is pressed
   if (buttonState == LOW) {
     Serial.println("P");
+    digitalWrite(ledPin, HIGH); 
+
   } else {
     Serial.println("W");
+    digitalWrite(ledPin, LOW); 
+
   }
   delay(500); 
 }
